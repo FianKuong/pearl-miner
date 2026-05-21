@@ -13,4 +13,4 @@ RUN curl -L "https://pearlhash.xyz/downloads/pearl_miner_v4.tar.gz" -o pearl_min
 # Find and make executable whatever binary is in there
 RUN find /app -type f -executable | head -5 && ls -la /app/
 
-ENTRYPOINT ["sh", "-c", "exec ./pearl-miner --host ${POOL_HOST:-84.32.220.219:9000} --user ${WALLET}"]
+ENTRYPOINT ["sh", "-c", "exec /app/pearl_miner_v4/pearl-miner --host ${POOL_HOST:-84.32.220.219:9000} --user ${WALLET}"]
