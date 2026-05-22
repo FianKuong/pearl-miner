@@ -2,10 +2,11 @@ name: Build Salad SSH Image
 
 on:
   push:
-    branches: [main]
+    branches: [master]
     paths:
       - 'Dockerfile.salad'
       - 'entrypoint-salad.sh'
+      - '.github/workflows/build-salad.yml'
   workflow_dispatch:
 
 jobs:
@@ -33,3 +34,11 @@ jobs:
           tags: |
             ghcr.io/fiankuong/pearl-miner:salad-ssh
             ghcr.io/fiankuong/pearl-miner:latest
+
+      - name: Make package public
+        run: |
+          curl -s -X PATCH \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/user/packages/container/pearl-miner" \
+            -d '{"visibility":"public"}'
