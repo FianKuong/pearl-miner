@@ -1,0 +1,23 @@
+FROM nvidia/cuda:12.4.0-runtime-ubuntu22.04
+
+RUN apt-get update && apt-get install -y curl tar openssh-server && \
+    mkdir -p /var/run/sshd && \
+    sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin without-password/' /etc/ssh/sshd_config && \
+    sed -i 's/#PubkeyAuthentication yes/PubkeyAuthentication yes/' /etc/ssh/sshd_config && \
+    ssh-keygen -A && \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Download pearl_miner_v4 from Pearlhash
+RUN curl -L "https://pearlhash.xyz/downloads/pearl_miner_v4.tar.gz" -o pearl_miner_v4.tar.gz \
+    && tar -xzf pearl_miner_v4.tar.gz \
+    && rm pearl_miner_v4.tar.gz \
+    && chmod +x pearl_miner_v4/pearl-miner || true
+
+COPY entrypoint-salad.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+EXPOSE 22
+
+ENTRYPOINT ["/entrypoint.sh"]
